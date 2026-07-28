@@ -51,24 +51,77 @@ window.switchTab = function(tabId, btnElement) {
     btnElement.classList.add('active');
 };
 
-// Car Management Functions
+// Car Management Functions with Dual Storage (LocalStorage + Firebase RTDB with Timeout)
 async function getCars() {
-    const reference = dbRef(db);
+    let cachedCars = [];
     try {
-        const snapshot = await get(child(reference, `cars`));
-        if (snapshot.exists()) {
-            return snapshot.val();
-        } else {
-            return [];
+        const raw = localStorage.getItem('roblox_cars_071_catalog');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                cachedCars = parsed;
+            }
+        }
+    } catch(e) {
+        console.warn("Erro ao ler localStorage:", e);
+    }
+
+    try {
+        const reference = dbRef(db);
+        const fetchPromise = get(child(reference, `cars`));
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("RTDB Timeout")), 2500)
+        );
+
+        const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
+        if (snapshot && snapshot.exists()) {
+            const val = snapshot.val();
+            let arr = [];
+            if (Array.isArray(val)) {
+                arr = val.filter(Boolean);
+            } else if (val && typeof val === 'object') {
+                arr = Object.values(val).filter(Boolean);
+            }
+
+            if (arr.length > 0) {
+                try {
+                    localStorage.setItem('roblox_cars_071_catalog', JSON.stringify(arr));
+                } catch(e) {}
+                return arr;
+            }
         }
     } catch (error) {
-        console.error(error);
-        return [];
+        console.warn("Firebase RTDB indisponível ou demorado. Usando cache local:", error);
     }
+
+    if (cachedCars.length > 0) {
+        return cachedCars;
+    }
+
+    return [];
 }
 
 async function saveCars(cars) {
-    await set(dbRef(db, 'cars'), cars);
+    const cleanCars = Array.isArray(cars) ? cars.filter(Boolean) : Object.values(cars).filter(Boolean);
+
+    // 1. Grava instantaneamente no LocalStorage (0ms delay)
+    try {
+        localStorage.setItem('roblox_cars_071_catalog', JSON.stringify(cleanCars));
+    } catch (e) {
+        console.warn("Não foi possível salvar no LocalStorage:", e);
+    }
+
+    // 2. Tenta sincronizar com Firebase RTDB com timeout de 3.0s
+    try {
+        const setPromise = set(dbRef(db, 'cars'), cleanCars);
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("RTDB Save Timeout")), 3000)
+        );
+        await Promise.race([setPromise, timeoutPromise]);
+        console.log("Catálogo salvo e sincronizado no Firebase!");
+    } catch (err) {
+        console.warn("Sincronização em nuvem do Firebase falhou ou demorou. Dados salvos localmente:", err);
+    }
 }
 
 // Helper: Image Compression & Data URL
@@ -253,7 +306,7 @@ document.getElementById('addCarForm').addEventListener('submit', async (e) => {
     }
 });
 
-// Event listeners para prévia de imagem ao selecionar arquivo
+// Event listeners para prévia de imagem ao selecionar arquivo ou colar URL
 const carImageFileInput = document.getElementById('carImageFile');
 if (carImageFileInput) {
     carImageFileInput.addEventListener('change', (e) => {
@@ -263,6 +316,23 @@ if (carImageFileInput) {
         if (file && container && img) {
             img.src = URL.createObjectURL(file);
             container.style.display = 'block';
+        }
+    });
+}
+
+const carImageTextInput = document.getElementById('carImage');
+if (carImageTextInput) {
+    carImageTextInput.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        const container = document.getElementById('addImagePreviewContainer');
+        const img = document.getElementById('addImagePreview');
+        if (container && img) {
+            if (url) {
+                img.src = url;
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
         }
     });
 }
@@ -280,18 +350,40 @@ if (editCarImageFileInput) {
     });
 }
 
+const editCarImageTextInput = document.getElementById('editCarImage');
+if (editCarImageTextInput) {
+    editCarImageTextInput.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        const container = document.getElementById('editImagePreviewContainer');
+        const img = document.getElementById('editImagePreview');
+        if (container && img) {
+            if (url) {
+                img.src = url;
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+    });
+}
+
 // Edit Modal Functions
 window.openEditModal = async function(carId) {
     const cars = await getCars();
-    const car = cars.find(c => c.id === carId);
-    if (!car) return;
+    if (!Array.isArray(cars)) return;
+
+    const car = cars.find(c => String(c.id) === String(carId));
+    if (!car) {
+        alert("⚠️ Veículo não encontrado para edição.");
+        return;
+    }
 
     document.getElementById('editCarId').value = car.id;
-    document.getElementById('editCarName').value = car.name;
-    document.getElementById('editCarCategory').value = car.category;
-    document.getElementById('editCarImage').value = car.image;
+    document.getElementById('editCarName').value = car.name || '';
+    document.getElementById('editCarCategory').value = car.category || 'basico';
+    document.getElementById('editCarImage').value = car.image || '';
     document.getElementById('editCarImageFile').value = ''; // reseta file input
-    document.getElementById('editCarDesc').value = car.description;
+    document.getElementById('editCarDesc').value = car.description || '';
 
     const container = document.getElementById('editImagePreviewContainer');
     const img = document.getElementById('editImagePreview');
@@ -319,14 +411,14 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
     submitBtn.innerText = "Salvando...";
 
     try {
-        const id = parseInt(document.getElementById('editCarId').value, 10);
+        const id = document.getElementById('editCarId').value;
         const name = document.getElementById('editCarName').value.trim();
         const category = document.getElementById('editCarCategory').value;
         let image = document.getElementById('editCarImage').value.trim();
         const fileElement = document.getElementById('editCarImageFile');
         const desc = document.getElementById('editCarDesc').value.trim();
 
-        // Se houver arquivo selecionado, faz upload novo (com timeout e fallback base64 automático)
+        // Se houver arquivo de foto selecionado
         if (fileElement.files && fileElement.files.length > 0) {
             submitBtn.innerText = "Processando imagem...";
             const uploadedImage = await uploadImage(fileElement);
@@ -335,16 +427,22 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
             }
         }
 
+        if (!image) {
+            image = "https://via.placeholder.com/400x250/222222/FFD700?text=LOJA+DA+071";
+        }
+
         let price = "R$ 99,90";
         if (category === 'intermediario') price = "R$ 129,90";
         if (category === 'premium') price = "R$ 159,90";
 
         let cars = await getCars();
-        const carIndex = cars.findIndex(c => c.id === id);
+        if (!Array.isArray(cars)) cars = [];
+
+        const carIndex = cars.findIndex(c => String(c.id) === String(id));
 
         if (carIndex !== -1) {
             cars[carIndex] = {
-                id: id,
+                id: cars[carIndex].id,
                 name: name,
                 category: category,
                 price: price,
@@ -353,13 +451,15 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
             };
 
             await saveCars(cars);
-            renderAdminTable();
+            await renderAdminTable();
             closeEditModal();
-            alert('✅ As alterações no veículo foram salvas na nuvem com sucesso!');
+            alert('✅ As alterações no veículo foram salvas com sucesso!');
+        } else {
+            alert('⚠️ O ID do veículo não foi encontrado na lista. Tente atualizar a página.');
         }
     } catch(err) {
-        console.error(err);
-        alert('❌ Ocorreu um erro ao editar o veículo.');
+        console.error("Erro ao salvar edição:", err);
+        alert('❌ Ocorreu um erro ao editar o veículo: ' + (err.message || err));
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Salvar Alterações";
@@ -368,11 +468,12 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
 
 // Delete Car Function
 window.deleteCar = async function(id) {
-    if (confirm('⚠️ Tem certeza de que deseja remover este veículo do catálogo na nuvem?')) {
+    if (confirm('⚠️ Tem certeza de que deseja remover este veículo do catálogo?')) {
         let cars = await getCars();
-        cars = cars.filter(c => c.id !== id);
+        if (!Array.isArray(cars)) cars = [];
+        cars = cars.filter(c => String(c.id) !== String(id));
         await saveCars(cars);
-        renderAdminTable();
+        await renderAdminTable();
     }
 };
 

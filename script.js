@@ -21,18 +21,47 @@ function sanitize(str) {
 }
 
 async function getCars() {
-    const dbRef = ref(db);
+    let cachedCars = [];
     try {
-        const snapshot = await get(child(dbRef, `cars`));
-        if (snapshot.exists()) {
-            return snapshot.val();
-        } else {
-            return getDefaultCars();
+        const raw = localStorage.getItem('roblox_cars_071_catalog');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                cachedCars = parsed;
+            }
+        }
+    } catch(e) {}
+
+    try {
+        const dbRef = ref(db);
+        const fetchPromise = get(child(dbRef, `cars`));
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 2500));
+        const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
+        
+        if (snapshot && snapshot.exists()) {
+            const val = snapshot.val();
+            let arr = [];
+            if (Array.isArray(val)) {
+                arr = val.filter(Boolean);
+            } else if (val && typeof val === 'object') {
+                arr = Object.values(val).filter(Boolean);
+            }
+            if (arr.length > 0) {
+                try {
+                    localStorage.setItem('roblox_cars_071_catalog', JSON.stringify(arr));
+                } catch(e) {}
+                return arr;
+            }
         }
     } catch (error) {
-        console.error(error);
-        return getDefaultCars(); // fallback se a database estiver vazia ou offline
+        console.warn("Firebase offline/demorado. Usando catálogo local:", error);
     }
+
+    if (cachedCars.length > 0) {
+        return cachedCars;
+    }
+
+    return getDefaultCars();
 }
 
 function getDefaultCars() {
