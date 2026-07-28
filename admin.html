@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Administração | Loja da 071</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-wrapper {
+            padding-top: 80px;
+            min-height: 100vh;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding-left: 5%;
+            padding-right: 5%;
+            padding-bottom: 80px;
+        }
+
+        .admin-nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 16px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: var(--transition-apple);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .admin-card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .car-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+        }
+
+        .car-table th {
+            text-align: left;
+            padding: 14px 18px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .car-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .car-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .car-thumb {
+            width: 60px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--glass-border);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-apple);
+        }
+
+        .btn-edit {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-edit:hover {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-delete {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(255, 69, 58, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-text">LOJA DA <span class="logo-badge">071</span> | ADMIN</span>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" target="_blank">Ver Loja Ao Vivo ↗</a>
+            <button onclick="logout()" class="btn-admin" style="background: rgba(255, 69, 58, 0.2) !important; color: var(--accent-red) !important; border-color: rgba(255, 69, 58, 0.4) !important;">Sair</button>
+        </div>
+    </nav>
+
+    <div class="admin-wrapper">
+        <div class="security-badge" style="margin-bottom: 24px;">
+            <span>🟢 Conexão Segura &bull; Painel de Controle Encriptado</span>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="admin-nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('catalog-tab', this)">🚗 Gerenciar Catálogo</button>
+            <button class="tab-btn" onclick="switchTab('password-tab', this)">🔑 Alterar Senha de Admin</button>
+        </div>
+
+        <!-- TAB 1: Catalog Management -->
+        <div id="catalog-tab" class="tab-content active">
+            <!-- Form: Add Car -->
+            <div class="admin-card">
+                <h2 class="admin-card-title">Adicionar Novo Veículo ao Catálogo</h2>
+                <form id="addCarForm">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+                        <div class="form-group">
+                            <label for="carName">Nome do Carro</label>
+                            <input type="text" id="carName" class="form-input" placeholder="Ex: Porsche 911" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carCategory">Categoria / Pacote</label>
+                            <select id="carCategory" class="form-input" required>
+                                <option value="basico">Combo Básico (R$ 99,90)</option>
+                                <option value="intermediario">Combo Intermediário (R$ 129,90)</option>
+                                <option value="premium">Combo Premium (R$ 159,90)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagem do Veículo</label>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <input type="text" id="carImage" class="form-input" placeholder="Cole um Link ou..." style="flex: 1;">
+                            <input type="file" id="carImageFile" class="form-input" accept="image/*" style="flex: 1;">
+                        </div>
+                        <small style="color: var(--text-tertiary); margin-top: 4px; display: block;">Envie um arquivo do seu PC ou cole um link externo.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="carDesc">Descrição do Veículo & Som</label>
+                        <textarea id="carDesc" class="form-input" rows="3" placeholder="Ex: Suspensão a ar, paredão de som no porta-malas e acabamento VIP." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Adicionar Veículo</button>
+                </form>
+            </div>
+
+            <!-- Table: Manage Cars -->
+            <div class="admin-card">
+                <h2 class="admin-card-title">Veículos Cadastrados no Site</h2>
+                <div style="overflow-x: auto;">
+                    <table class="car-table">
+                        <thead>
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome do Carro</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carTableBody">
+                            <!-- Injected by admin.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Change Password -->
+        <div id="password-tab" class="tab-content">
+            <div class="admin-card" style="max-width: 600px;">
+                <h2 class="admin-card-title">Alterar Senha do Administrador</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem;">Defina uma nova senha para você e seu amigo acessarem o painel de administração com segurança máxima.</p>
+                
+                <div id="passAlert" class="alert-box"></div>
+
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Senha Atual</label>
+                        <input type="password" id="currentPassword" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nova Senha</label>
+                        <input type="password" id="newPassword" class="form-input" placeholder="No mínimo 6 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Nova Senha</label>
+                        <input type="password" id="confirmPassword" class="form-input" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Atualizar Senha Agora</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Apple-style Modal Dialog for Editing Cars -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title">Editar Veículo</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editCarForm">
+                <input type="hidden" id="editCarId">
+                <div class="form-group">
+                    <label for="editCarName">Nome do Carro</label>
+                    <input type="text" id="editCarName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCarCategory">Categoria</label>
+                    <select id="editCarCategory" class="form-input" required>
+                        <option value="basico">Combo Básico (R$ 99,90)</option>
+                        <option value="intermediario">Combo Intermediário (R$ 129,90)</option>
+                        <option value="premium">Combo Premium (R$ 159,90)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Imagem do Veículo</label>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="editCarImage" class="form-input" placeholder="Cole um Link ou..." style="flex: 1;">
+                        <input type="file" id="editCarImageFile" class="form-input" accept="image/*" style="flex: 1;">
+                    </div>
+                    <small style="color: var(--text-tertiary); margin-top: 4px; display: block;">Mantenha vazio para não alterar.</small>
+                </div>
+                <div class="form-group">
+                    <label for="editCarDesc">Descrição</label>
+                    <textarea id="editCarDesc" class="form-input" rows="3" required></textarea>
+                </div>
+                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" class="filter-btn" onclick="closeEditModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

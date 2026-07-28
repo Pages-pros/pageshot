@@ -1,0 +1,776 @@
+/* ==========================================================================
+   LOJA DA 071 - ESTADO DA BAHIA (APPLE DARK & GOLDEN SUNSET EDITION)
+   ========================================================================== */
+
+:root {
+    --bg-base: #08080a;
+    --bg-surface: #121215;
+    --bg-card: rgba(255, 255, 255, 0.04);
+    --bg-card-hover: rgba(255, 215, 0, 0.06);
+    
+    /* Cores Estado da Bahia 071 (Ouro Solar, Âmbar Pôr do Sol de Salvador & Preto Pista) */
+    --bahia-gold: #ffd700;
+    --bahia-amber: #ff9900;
+    --bahia-orange: #ff5500;
+    --bahia-glow: rgba(255, 215, 0, 0.28);
+    --bahia-glow-strong: rgba(255, 153, 0, 0.45);
+
+    --primary: #ffd700;
+    --primary-hover: #ffea75;
+    --primary-glow: rgba(255, 215, 0, 0.3);
+
+    --accent-red: #ff3b30;
+    --accent-green: #34c759;
+
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1a6;
+    --text-tertiary: #6e6e73;
+
+    --glass-bg: rgba(18, 18, 22, 0.82);
+    --glass-border: rgba(255, 215, 0, 0.2);
+    --glass-border-light: rgba(255, 215, 0, 0.4);
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
+    --radius-pill: 980px;
+
+    --font-main: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+    --transition-apple: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    line-height: 1.47059;
+    letter-spacing: -0.022em;
+    background-image: 
+        radial-gradient(circle at 20% 15%, rgba(255, 215, 0, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 80% 85%, rgba(255, 153, 0, 0.05) 0%, transparent 45%);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+    letter-spacing: -0.03em;
+    font-weight: 800;
+}
+
+strong, span.highlight {
+    color: var(--bahia-gold);
+    text-shadow: 0 0 12px var(--bahia-glow);
+}
+
+/* Navbar Apple Style - Estado da Bahia */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 68px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8%;
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    z-index: 1000;
+    border-bottom: 1px solid var(--glass-border);
+    transition: var(--transition-apple);
+}
+
+.logo-text {
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.logo-badge {
+    background: linear-gradient(135deg, var(--bahia-gold) 0%, var(--bahia-amber) 100%);
+    color: #000000;
+    font-size: 0.8rem;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    box-shadow: 0 0 14px var(--bahia-glow);
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: var(--transition-apple);
+}
+
+.nav-links a:hover {
+    color: var(--bahia-gold);
+}
+
+.btn-admin {
+    border: 1px solid var(--glass-border-light) !important;
+    padding: 8px 20px !important;
+    border-radius: var(--radius-pill) !important;
+    font-size: 0.85rem !important;
+    color: #ffffff !important;
+    background: rgba(255, 215, 0, 0.08) !important;
+    backdrop-filter: blur(10px);
+}
+
+.btn-admin:hover {
+    background: var(--bahia-gold) !important;
+    color: #000000 !important;
+    border-color: var(--bahia-gold) !important;
+    box-shadow: 0 4px 20px var(--bahia-glow);
+}
+
+/* Hero Section Apple + Estado da Bahia */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 130px 5% 70px;
+    position: relative;
+    background: radial-gradient(circle at 50% 25%, rgba(255, 215, 0, 0.12) 0%, rgba(255, 153, 0, 0.04) 55%, transparent 80%);
+}
+
+.hero-tag {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--bahia-gold);
+    margin-bottom: 16px;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 8px 22px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 0 15px var(--bahia-glow);
+    animation: fadeInDown 0.8s ease;
+}
+
+.hero-title {
+    font-size: clamp(3.2rem, 7.5vw, 6rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #ffe680 60%, #ffaa00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeInUp 0.9s ease;
+}
+
+.hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin: 0 auto 38px;
+    font-weight: 400;
+    animation: fadeInUp 1s ease;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--bahia-gold) 0%, var(--bahia-amber) 100%);
+    color: #000000;
+    padding: 16px 40px;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-apple);
+    box-shadow: 0 8px 25px var(--bahia-glow);
+}
+
+.btn-primary:hover {
+    transform: scale(1.04);
+    background: linear-gradient(135deg, #ffea75 0%, #ffaa00 100%);
+    box-shadow: 0 12px 35px var(--bahia-glow-strong);
+}
+
+.hero-image-wrapper {
+    margin-top: 50px;
+    position: relative;
+    max-width: 900px;
+    width: 100%;
+    animation: fadeInUp 1.2s ease;
+}
+
+/* FIX IMAGEM HERO */
+.hero-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover; /* NÃO ESTICA */
+    object-position: center;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border-light);
+    box-shadow: 0 30px 90px rgba(0,0,0,0.95);
+    position: relative;
+    z-index: 2;
+    transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-image:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 40px 100px var(--bahia-glow-strong);
+}
+
+.hero-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, var(--bahia-gold) 0%, var(--bahia-amber) 70%);
+    filter: blur(140px);
+    opacity: 0.25;
+    z-index: 1;
+    border-radius: 50%;
+}
+
+/* Catalog Section */
+.catalog-section {
+    padding: 120px 8% 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+}
+
+.section-title span {
+    background: linear-gradient(135deg, var(--bahia-gold), var(--bahia-amber));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Category Filters Bahia Gold Pill */
+.category-filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--glass-border);
+    margin: 30px auto 50px;
+    backdrop-filter: blur(15px);
+    gap: 6px;
+    max-width: fit-content;
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: var(--transition-apple);
+}
+
+.filter-btn.active {
+    background: var(--bahia-gold);
+    color: #000000;
+    font-weight: 800;
+    box-shadow: 0 4px 15px var(--bahia-glow);
+}
+
+.filter-btn:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Cards Grid */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+}
+
+.car-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition-apple);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.car-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    background: var(--bg-card-hover);
+    border-color: var(--bahia-gold);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px var(--bahia-glow);
+}
+
+/* CORREÇÃO DAS FOTOS ESTICADAS */
+.car-img-wrapper {
+    width: 100%;
+    height: 220px; /* Altura fixa proporcional */
+    overflow: hidden;
+    position: relative;
+    background: #0f0f12;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.car-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ESSENCIAL: Impede que a foto fique esticada */
+    object-position: center;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.car-card:hover .car-img {
+    transform: scale(1.07);
+}
+
+.car-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(8, 8, 10, 0.85) 100%);
+    pointer-events: none;
+}
+
+.car-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--bahia-gold);
+    color: var(--bahia-gold);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.car-info {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.car-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+}
+
+.car-desc {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.car-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.car-price {
+    font-size: 1.25rem;
+    color: var(--bahia-gold);
+    font-weight: 900;
+    text-shadow: 0 0 10px var(--bahia-glow);
+}
+
+/* VIP Section */
+.vip-section {
+    padding: 100px 8%;
+    background: linear-gradient(180deg, var(--bg-base) 0%, var(--bg-surface) 100%);
+    border-top: 1px solid var(--glass-border);
+}
+
+.vip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 50px auto 0;
+}
+
+.vip-card {
+    background: var(--bg-card);
+    padding: 32px 24px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition-apple);
+    backdrop-filter: blur(10px);
+}
+
+.vip-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--bahia-gold);
+    background: var(--bg-card-hover);
+    box-shadow: 0 10px 30px var(--bahia-glow);
+}
+
+.vip-icon {
+    font-size: 2.8rem;
+    margin-bottom: 18px;
+    display: inline-block;
+}
+
+.vip-card h3 {
+    margin-bottom: 8px;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.vip-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Forms & Inputs Apple Bahia Style */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition-apple);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--bahia-gold);
+    background: rgba(255, 215, 0, 0.05);
+    box-shadow: 0 0 0 4px var(--bahia-glow);
+}
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition-apple);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border-light);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 540px;
+    padding: 36px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
+    transform: scale(0.95) translateY(20px);
+    transition: var(--transition-apple);
+}
+
+.modal-overlay.active .modal-box {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.modal-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: var(--transition-apple);
+}
+
+.modal-close:hover {
+    background: var(--bahia-gold);
+    color: #000;
+}
+
+/* Security Alerts & Badges */
+.security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid var(--bahia-gold);
+    color: var(--bahia-gold);
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.alert-box {
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.alert-error {
+    background: rgba(255, 59, 48, 0.15);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: var(--accent-red);
+}
+
+.alert-success {
+    background: rgba(52, 199, 89, 0.15);
+    border: 1px solid rgba(52, 199, 89, 0.3);
+    color: var(--accent-green);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 40px 5%;
+    border-top: 1px solid var(--glass-border);
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    background: var(--bg-base);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   BANDEIRA DA BAHIA & ANIMAÇÕES PAREDÃO 071
+   ========================================================================== */
+
+.bahia-flag-icon {
+    width: 28px;
+    height: 19px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    vertical-align: middle;
+    transition: var(--transition-apple);
+}
+
+.bahia-mini-flag {
+    width: 20px;
+    height: 14px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-right: 6px;
+    display: inline-block;
+    box-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+.pulse-flag {
+    animation: flagPulse 3s infinite ease-in-out;
+}
+
+@keyframes flagPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.3)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.7)); }
+}
+
+/* Bandeiras Flutuantes */
+.floating-flag {
+    position: absolute;
+    width: 60px;
+    height: 40px;
+    opacity: 0.25;
+    filter: blur(0.5px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.floating-flag svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+}
+
+.flag-left {
+    top: 20%;
+    left: 8%;
+    animation: floatLeft 6s ease-in-out infinite alternate;
+}
+
+.flag-right {
+    top: 25%;
+    right: 8%;
+    animation: floatRight 7s ease-in-out infinite alternate;
+}
+
+@keyframes floatLeft {
+    0% { transform: translateY(0px) rotate(-8deg); }
+    100% { transform: translateY(-25px) rotate(4deg); }
+}
+
+@keyframes floatRight {
+    0% { transform: translateY(0px) rotate(10deg); }
+    100% { transform: translateY(-30px) rotate(-5deg); }
+}
+
+/* Equalizador de Som (Paredão 071) */
+.equalizer-bar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    height: 28px;
+    margin: 15px 0 25px;
+}
+
+.equalizer-bar .bar {
+    width: 5px;
+    background: linear-gradient(180deg, var(--bahia-gold), var(--bahia-amber));
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--bahia-glow);
+}
+
+.bar-1 { animation: eqBar 1.2s ease-in-out infinite alternate; }
+.bar-2 { animation: eqBar 0.8s ease-in-out infinite alternate 0.2s; }
+.bar-3 { animation: eqBar 1.5s ease-in-out infinite alternate 0.4s; }
+.bar-4 { animation: eqBar 0.9s ease-in-out infinite alternate 0.1s; }
+.bar-5 { animation: eqBar 1.3s ease-in-out infinite alternate 0.3s; }
+
+@keyframes eqBar {
+    0% { height: 6px; opacity: 0.4; }
+    100% { height: 28px; opacity: 1; box-shadow: 0 0 14px var(--bahia-gold); }
+}
+
+/* Texto Neon Pulsante */
+.glow-text {
+    color: var(--bahia-gold);
+    animation: neonGlow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes neonGlow {
+    0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.4), 0 0 20px rgba(255, 153, 0, 0.2); }
+    100% { text-shadow: 0 0 18px rgba(255, 215, 0, 0.9), 0 0 35px rgba(255, 153, 0, 0.6); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar { padding: 0 5%; }
+    .nav-links { gap: 16px; }
+    .hero-title { font-size: 2.8rem; }
+    .catalog-grid { grid-template-columns: 1fr; }
+    .floating-flag { display: none; }
+}
+

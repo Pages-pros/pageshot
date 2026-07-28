@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja da 071 | Roblox Elite Cars</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Apple Blur Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <svg class="bahia-flag-icon pulse-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+                <rect width="900" height="150" y="0" fill="#d52b1e"/>
+                <rect width="900" height="150" y="150" fill="#ffffff"/>
+                <rect width="900" height="150" y="300" fill="#d52b1e"/>
+                <rect width="900" height="150" y="450" fill="#ffffff"/>
+                <rect width="300" height="300" x="0" y="0" fill="#00247d"/>
+                <polygon points="150,55 178,140 265,140 195,192 222,275 150,225 78,275 105,192 35,140 122,140" fill="#ffffff"/>
+            </svg>
+            <span class="logo-text">LOJA DA <span class="logo-badge">071</span></span>
+        </div>
+        <div class="nav-links">
+            <a href="#catalogo">Catálogo</a>
+            <a href="#vip">Benefícios VIP</a>
+            <a href="login.html" class="btn-admin">Acesso Admin</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <!-- Floating Animated Bahia Flags -->
+        <div class="floating-flag flag-left">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+                <rect width="900" height="150" y="0" fill="#d52b1e"/>
+                <rect width="900" height="150" y="150" fill="#ffffff"/>
+                <rect width="900" height="150" y="300" fill="#d52b1e"/>
+                <rect width="900" height="150" y="450" fill="#ffffff"/>
+                <rect width="300" height="300" x="0" y="0" fill="#00247d"/>
+                <polygon points="150,55 178,140 265,140 195,192 222,275 150,225 78,275 105,192 35,140 122,140" fill="#ffffff"/>
+            </svg>
+        </div>
+        <div class="floating-flag flag-right">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+                <rect width="900" height="150" y="0" fill="#d52b1e"/>
+                <rect width="900" height="150" y="150" fill="#ffffff"/>
+                <rect width="900" height="150" y="300" fill="#d52b1e"/>
+                <rect width="900" height="150" y="450" fill="#ffffff"/>
+                <rect width="300" height="300" x="0" y="0" fill="#00247d"/>
+                <polygon points="150,55 178,140 265,140 195,192 222,275 150,225 78,275 105,192 35,140 122,140" fill="#ffffff"/>
+            </svg>
+        </div>
+
+        <div class="hero-tag">
+            <svg class="bahia-mini-flag" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+                <rect width="900" height="150" y="0" fill="#d52b1e"/>
+                <rect width="900" height="150" y="150" fill="#ffffff"/>
+                <rect width="900" height="150" y="300" fill="#d52b1e"/>
+                <rect width="900" height="150" y="450" fill="#ffffff"/>
+                <rect width="300" height="300" x="0" y="0" fill="#00247d"/>
+                <polygon points="150,55 178,140 265,140 195,192 222,275 150,225 78,275 105,192 35,140 122,140" fill="#ffffff"/>
+            </svg>
+            SALVADOR &bull; BAHIA &bull; COMBOS ELITE 2025
+        </div>
+
+        <h1 class="hero-title">PAREDÃO <strong class="glow-text">071</strong></h1>
+        <p class="hero-subtitle">Engenharia, estilo e o legítimo som automotivo da Bahia feito do zero para o seu jogo no Roblox.</p>
+        
+        <!-- Equalizer Sound Wave Animation -->
+        <div class="equalizer-bar">
+            <span class="bar bar-1"></span>
+            <span class="bar bar-2"></span>
+            <span class="bar bar-3"></span>
+            <span class="bar bar-4"></span>
+            <span class="bar bar-5"></span>
+        </div>
+
+        <a href="#catalogo" class="btn-primary wave-btn">Explorar Coleção</a>
+
+        <!-- Hero Featured Image -->
+        <div class="hero-image-wrapper">
+            <img src="assets/saveiro_basico_1785255337024.png" alt="Saveiro G7 Paredão 071" class="hero-image" id="heroImage">
+            <div class="hero-glow"></div>
+        </div>
+    </header>
+
+    <!-- Catalog Section -->
+    <section id="catalogo" class="catalog-section">
+        <div class="section-header">
+            <h2 class="section-title">Escolha o seu <span>Veículo</span></h2>
+            <p class="section-subtitle">Modelos exclusivos projetados com riqueza de detalhes e som integrado.</p>
+        </div>
+        
+        <div class="category-filters">
+            <button class="filter-btn active" data-filter="all">Todos os Modelos</button>
+            <button class="filter-btn" data-filter="basico">Básico (R$ 99,90)</button>
+            <button class="filter-btn" data-filter="intermediario">Intermediário (R$ 129,90)</button>
+            <button class="filter-btn" data-filter="premium">Premium (R$ 159,90)</button>
+        </div>
+
+        <div class="catalog-grid" id="catalogGrid">
+            <!-- Rendered by script.js -->
+        </div>
+    </section>
+
+    <!-- VIP Benefits Section -->
+    <section id="vip" class="vip-section">
+        <div class="section-header">
+            <h2 class="section-title">Benefícios <span>VIP</span> Incluídos</h2>
+            <p class="section-subtitle">Cada veículo acompanha privilégios exclusivos no servidor.</p>
+        </div>
+        <div class="vip-grid">
+            <div class="vip-card">
+                <div class="vip-icon">👑</div>
+                <h3>ADM Pago</h3>
+                <p>Acesso total com permissões especiais de administração.</p>
+            </div>
+            <div class="vip-card">
+                <div class="vip-icon">🏷️</div>
+                <h3>Tag Elite</h3>
+                <p>Identificação VIP destacada nos chats e perfis.</p>
+            </div>
+            <div class="vip-card">
+                <div class="vip-icon">🚗</div>
+                <h3>Puxar Veículos</h3>
+                <p>Spawne qualquer um dos seus carros instantaneamente.</p>
+            </div>
+            <div class="vip-card">
+                <div class="vip-icon">🔊</div>
+                <h3>Carro com Som</h3>
+                <p>Paredão de som automotivo ativado e sincronizado.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Loja da 071. Todos os direitos reservados. Paredão 071 &bull; Design de Alta Performance.</p>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

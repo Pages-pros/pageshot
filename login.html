@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito | Loja da 071</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at 50% 30%, rgba(255, 215, 0, 0.06) 0%, var(--bg-base) 80%);
+        }
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            padding: 44px 36px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border-light);
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+        }
+        .lock-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="security-badge">
+                <span>🛡️ Firebase Auth Ativo</span>
+            </div>
+
+            <div class="lock-icon">🔐</div>
+            <h1 class="login-title">Acesso Restrito</h1>
+            <p class="login-subtitle">Acesso sincronizado em Nuvem (071)</p>
+
+            <div id="alertBox" class="alert-box alert-error"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="emailInput">E-mail do Administrador</label>
+                    <input type="email" id="emailInput" class="form-input" placeholder="admin@071.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">Senha</label>
+                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••••••" required>
+                </div>
+                <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%;">Autenticar</button>
+            </form>
+
+            <a href="index.html" style="color: var(--text-tertiary); display: inline-block; margin-top: 24px; text-decoration: none; font-size: 0.85rem; transition: var(--transition-apple);" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-tertiary)'">&larr; Voltar para a Loja Principal</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhmxq-NlbBbiUHD-gho55LJJTEGhyT2hw",
+            authDomain: "loja-071.firebaseapp.com",
+            projectId: "loja-071",
+            storageBucket: "loja-071.firebasestorage.app",
+            messagingSenderId: "1045820766264",
+            appId: "1:1045820766264:web:41545e9409dae41e9e8ecd",
+            measurementId: "G-XM9W4EGQ6P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // If already logged in, redirect
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = "admin.html";
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('alertBox');
+            const submitBtn = document.getElementById('submitBtn');
+            const email = document.getElementById('emailInput').value;
+            const password = document.getElementById('passwordInput').value;
+
+            alertBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Autenticando...';
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Success will trigger onAuthStateChanged to redirect
+                })
+                .catch((error) => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = 'Autenticar';
+                    alertBox.innerHTML = `⚠️ Falha no login: verifique suas credenciais.`;
+                    alertBox.style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>
