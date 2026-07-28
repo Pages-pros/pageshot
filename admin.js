@@ -71,20 +71,93 @@ async function saveCars(cars) {
     await set(dbRef(db, 'cars'), cars);
 }
 
-// Helper: Image Upload function
+// Helper: Image Compression & Data URL
+function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth || height > maxHeight) {
+                    if (width / height > maxWidth / maxHeight) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    } else {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = (err) => reject(err);
+            img.src = e.target.result;
+        };
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+    });
+}
+
+// Helper: Image Upload function with 3.5s Timeout & Automatic Fallback
 async function uploadImage(fileElement) {
+    if (!fileElement || !fileElement.files || fileElement.files.length === 0) return null;
     const file = fileElement.files[0];
-    if (!file) return null;
     
-    // Create a unique filename
-    const filename = Date.now() + '_' + file.name;
-    const fileRef = storageRef(storage, 'car_images/' + filename);
-    
-    // Upload
-    await uploadBytes(fileRef, file);
-    // Get URL
-    const url = await getDownloadURL(fileRef);
-    return url;
+    // 1. Gera fallback Base64 comprimido preventivamente (~20ms)
+    let base64Fallback = null;
+    try {
+        base64Fallback = await compressImage(file);
+    } catch (e) {
+        console.warn("Falha ao comprimir imagem localmente:", e);
+    }
+
+    // 2. Tenta enviar para o Firebase Storage com timeout de 3.5s
+    try {
+        const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const filename = Date.now() + '_' + sanitizedName;
+        const fileRef = storageRef(storage, 'car_images/' + filename);
+
+        const storagePromise = (async () => {
+            await uploadBytes(fileRef, file);
+            return await getDownloadURL(fileRef);
+        })();
+
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout no Firebase Storage")), 3500)
+        );
+
+        const url = await Promise.race([storagePromise, timeoutPromise]);
+        if (url) {
+            console.log("Upload concluído com sucesso no Firebase Storage:", url);
+            return url;
+        }
+    } catch (err) {
+        console.warn("Firebase Storage indisponível ou em timeout. Usando imagem Base64 otimizada:", err);
+    }
+
+    // 3. Retorna o fallback Base64 comprimido
+    if (base64Fallback) {
+        return base64Fallback;
+    }
+
+    // 4. Fallback final FileReader
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+    });
 }
 
 
@@ -167,15 +240,45 @@ document.getElementById('addCarForm').addEventListener('submit', async (e) => {
         renderAdminTable();
 
         document.getElementById('addCarForm').reset();
+        const addContainer = document.getElementById('addImagePreviewContainer');
+        if (addContainer) addContainer.style.display = 'none';
+
         alert('✅ Veículo adicionado com sucesso ao catálogo em nuvem!');
     } catch(err) {
         console.error(err);
-        alert('❌ Ocorreu um erro ao salvar o carro. Verifique se o Storage está ativado nas regras do Firebase.');
+        alert('❌ Ocorreu um erro ao salvar o carro.');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Adicionar Veículo";
     }
 });
+
+// Event listeners para prévia de imagem ao selecionar arquivo
+const carImageFileInput = document.getElementById('carImageFile');
+if (carImageFileInput) {
+    carImageFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const container = document.getElementById('addImagePreviewContainer');
+        const img = document.getElementById('addImagePreview');
+        if (file && container && img) {
+            img.src = URL.createObjectURL(file);
+            container.style.display = 'block';
+        }
+    });
+}
+
+const editCarImageFileInput = document.getElementById('editCarImageFile');
+if (editCarImageFileInput) {
+    editCarImageFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const container = document.getElementById('editImagePreviewContainer');
+        const img = document.getElementById('editImagePreview');
+        if (file && container && img) {
+            img.src = URL.createObjectURL(file);
+            container.style.display = 'block';
+        }
+    });
+}
 
 // Edit Modal Functions
 window.openEditModal = async function(carId) {
@@ -189,6 +292,17 @@ window.openEditModal = async function(carId) {
     document.getElementById('editCarImage').value = car.image;
     document.getElementById('editCarImageFile').value = ''; // reseta file input
     document.getElementById('editCarDesc').value = car.description;
+
+    const container = document.getElementById('editImagePreviewContainer');
+    const img = document.getElementById('editImagePreview');
+    if (container && img) {
+        if (car.image) {
+            img.src = car.image;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
 
     document.getElementById('editModal').classList.add('active');
 };
@@ -212,10 +326,13 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
         const fileElement = document.getElementById('editCarImageFile');
         const desc = document.getElementById('editCarDesc').value.trim();
 
-        // Se houver arquivo selecionado, faz upload novo e substitui a url
-        if (fileElement.files.length > 0) {
-            submitBtn.innerText = "Fazendo upload da imagem...";
-            image = await uploadImage(fileElement);
+        // Se houver arquivo selecionado, faz upload novo (com timeout e fallback base64 automático)
+        if (fileElement.files && fileElement.files.length > 0) {
+            submitBtn.innerText = "Processando imagem...";
+            const uploadedImage = await uploadImage(fileElement);
+            if (uploadedImage) {
+                image = uploadedImage;
+            }
         }
 
         let price = "R$ 99,90";
@@ -238,11 +355,11 @@ document.getElementById('editCarForm').addEventListener('submit', async (e) => {
             await saveCars(cars);
             renderAdminTable();
             closeEditModal();
-            alert('✅ As alterações no veículo foram salvas na nuvem!');
+            alert('✅ As alterações no veículo foram salvas na nuvem com sucesso!');
         }
     } catch(err) {
         console.error(err);
-        alert('❌ Ocorreu um erro ao editar. Verifique as regras do Storage no Firebase.');
+        alert('❌ Ocorreu um erro ao editar o veículo.');
     } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = "Salvar Alterações";
