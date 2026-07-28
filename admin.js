@@ -162,49 +162,23 @@ function compressImage(file, maxWidth = 1000, maxHeight = 1000, quality = 0.8) {
     });
 }
 
-// Helper: Image Upload function with 3.5s Timeout & Automatic Fallback
+// Helper: Image Upload function (Instant Base64 Compression - 0ms delay, zero Firebase Storage hangs)
 async function uploadImage(fileElement) {
     if (!fileElement || !fileElement.files || fileElement.files.length === 0) return null;
     const file = fileElement.files[0];
     
-    // 1. Gera fallback Base64 comprimido preventivamente (~20ms)
-    let base64Fallback = null;
+    // 1. Converte e comprime a imagem localmente no navegador em ~30ms (sem depender de regras do Firebase Storage)
     try {
-        base64Fallback = await compressImage(file);
-    } catch (e) {
-        console.warn("Falha ao comprimir imagem localmente:", e);
-    }
-
-    // 2. Tenta enviar para o Firebase Storage com timeout de 3.5s
-    try {
-        const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const filename = Date.now() + '_' + sanitizedName;
-        const fileRef = storageRef(storage, 'car_images/' + filename);
-
-        const storagePromise = (async () => {
-            await uploadBytes(fileRef, file);
-            return await getDownloadURL(fileRef);
-        })();
-
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout no Firebase Storage")), 3500)
-        );
-
-        const url = await Promise.race([storagePromise, timeoutPromise]);
-        if (url) {
-            console.log("Upload concluído com sucesso no Firebase Storage:", url);
-            return url;
+        const compressedBase64 = await compressImage(file, 900, 900, 0.75);
+        if (compressedBase64) {
+            console.log("Imagem comprimida localmente com sucesso! Tamanho ideal atingido.");
+            return compressedBase64;
         }
-    } catch (err) {
-        console.warn("Firebase Storage indisponível ou em timeout. Usando imagem Base64 otimizada:", err);
+    } catch (e) {
+        console.warn("Falha ao comprimir imagem localmente, tentando leitura direta:", e);
     }
 
-    // 3. Retorna o fallback Base64 comprimido
-    if (base64Fallback) {
-        return base64Fallback;
-    }
-
-    // 4. Fallback final FileReader
+    // 2. Fallback FileReader direto
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => resolve(e.target.result);
@@ -262,10 +236,13 @@ document.getElementById('addCarForm').addEventListener('submit', async (e) => {
         let image = document.getElementById('carImage').value.trim();
         const fileElement = document.getElementById('carImageFile');
 
-        // Se houver arquivo selecionado, faz upload e usa a URL da nuvem.
+        // Se houver arquivo selecionado, converte a foto em super velocidade
         if (fileElement.files.length > 0) {
-            submitBtn.innerText = "Fazendo upload da imagem...";
-            image = await uploadImage(fileElement);
+            submitBtn.innerText = "Processando imagem...";
+            const uploadedImage = await uploadImage(fileElement);
+            if (uploadedImage) {
+                image = uploadedImage;
+            }
         }
 
         if (!image) {
